@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+
+    <!-- a parent bean for all dummies. TODO, Must be removed -->
+    <bean id="dummyBase" abstract="true">
+        <property name="errorFrequency" value="5"/>
+        <property name="usernameErrorSuffix" value="ERROR"/>
+    </bean>
+    
+    <!-- The LMS Client implementation -->
+    <bean class="coza.opencollab.unipoole.service.lms.impl.DummyLMSClient" />
+    
+    
+    <!-- The Authentication service -->
+    <bean class="coza.opencollab.unipoole.service.auth.impl.DummyAuthenticationService" parent="dummyBase" />
+    
+     
+    <!-- The Creator Service -->
+    <bean class="coza.opencollab.unipoole.service.creator.impl.DummyCreatorService" />
+    
+    
+    <!-- The Code Service -->
+    <bean class="coza.opencollab.unipoole.service.creator.impl.DummyCodeService" />
+    
+    
+    <!-- The Event Service -->
+    <bean class="coza.opencollab.unipoole.service.event.impl.DummyEventService" />
+    
+     
+    <!-- The status service -->
+    <bean class="coza.opencollab.unipoole.service.report.impl.DummyStatusService">
+        <property name="currentCodeVersions">
+            <map>
+                <entry key="client.base" value="1.0.0"/>
+                <entry key="unisa.welcome" value="1.0.0"/>
+                <entry key="unisa.faq" value="1.0.0"/>
+                <entry key="sakai.resources" value="1.0.0"/>
+                <entry key="sakai.melete" value="1.0.0"/>
+                <entry key="sakai.samigo" value="1.0.0"/>
+                <entry key="sakai.announcements" value="1.0.0"/>
+                <entry key="sakai.schedule" value="1.0.0"/>
+                <entry key="sakai.yaft" value="1.0.0"/>
+            </map>
+        </property>
+        <property name="currentContentVersions">
+            <map>
+                <entry key="client.base" value="1.0.0"/>
+                <entry key="unisa.welcome" value="1.0.0"/>
+                <entry key="unisa.faq" value="1.0.0"/>
+                <entry key="sakai.resources" value="1.0.0"/>
+                <entry key="sakai.melete" value="1.0.0"/>
+                <entry key="sakai.samigo" value="1.0.0"/>
+                <entry key="sakai.announcements" value="1.0.0"/>
+                <entry key="sakai.schedule" value="1.0.0"/>
+                <entry key="sakai.yaft" value="1.0.0"/>
+            </map>
+        </property>
+        <property name="clientCodeVersions">
+            <map>
+                <entry key="client.base" value="1.0.0"/>
+                <entry key="unisa.welcome" value="1.0.0"/>
+                <entry key="unisa.faq" value="1.0.0"/>
+                <entry key="sakai.resources" value="1.0.0"/>
+                <entry key="sakai.melete" value="1.0.0"/>
+                <entry key="sakai.samigo" value="1.0.0"/>
+                <entry key="sakai.announcements" value="1.0.0"/>
+                <entry key="sakai.schedule" value="1.0.0"/>
+                <entry key="sakai.yaft" value="1.0.0"/>
+            </map>
+        </property>
+        <property name="clientContentVersions">
+            <map>
+                <entry key="client.base" value="1.0.0"/>
+                <entry key="unisa.welcome" value="1.0.0"/>
+                <entry key="unisa.faq" value="1.0.0"/>
+                <entry key="sakai.resources" value="1.0.0"/>
+                <entry key="sakai.melete" value="1.0.0"/>
+                <entry key="sakai.samigo" value="1.0.0"/>
+                <entry key="sakai.announcements" value="1.0.0"/>
+                <entry key="sakai.schedule" value="1.0.0"/>
+                <entry key="sakai.yaft" value="1.0.0"/>
+            </map>
+        </property>
+    </bean>
+    
+    
+    <!-- The Synch service -->
+    <bean class="coza.opencollab.unipoole.service.synch.impl.DummySynchService" parent="dummyBase">
+    </bean>
+</beans>

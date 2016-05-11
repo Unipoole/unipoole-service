@@ -1,0 +1,11 @@
+<!-- One site with complex descriptions -->
+<sites>
+    <status>SUCCESS</status>
+    <message>Well done you got a site</message>
+    <site>
+        <id>!admin</id>
+        <title>Administration Workspace</title>
+        <description><![CDATA[<h1>DesriptionHere</h1><p>Blablabal</p>]]></description>
+        <shortDescription><![CDATA[<h1>ShortDesriptionHere</h1><p>Blablabal</p>]]></shortDescription>
+    </site>
+</sites>

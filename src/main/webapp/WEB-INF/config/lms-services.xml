@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
+
+    <!-- The LMS Client implementation -->
+    <bean class="coza.opencollab.unipoole.service.lms.impl.SakaiLMSClient">
+        <property name="sakaiSiteTypeMaster" value="${sakai.site.type.master}" />
+        <property name="sakaiSiteTypeGroup" value="${sakai.site.type.group}" />
+        <property name="masterSuffix" value="${sakai.site.master.suffix}" />
+        <property name="masterModuleFilter">
+            <bean class="coza.opencollab.unipoole.service.lms.filter.impl.AllowAllModuleFilter" />
+        </property>
+        <property name="groupModuleFilter">
+            <bean class="coza.opencollab.unipoole.service.lms.filter.impl.ListModuleFilter">
+                <property name="moduleIds">
+                    <list>
+                        <value>AFL1501-13-S1-43T</value>
+                        <value>OCT1502-15-S1-43T</value>
+                        <value>OCT1501-16-S1-43T</value>
+                        <value>AFL1501-15-S1-43T</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+        <property name="toolDataConverters">
+            <map>
+                <entry key="client.base">
+                    <bean class="coza.opencollab.unipoole.service.lms.impl.ClientBaseHandler">
+                        <property name="notOnMenu">
+                            <list>
+                                <value>client.base</value>
+                                <value>unisa.welcome</value>
+                            </list>
+                        </property>
+                    </bean>
+                </entry>
+                <entry key="sakai.home">
+                    <bean class="coza.opencollab.unipoole.service.lms.impl.StaticHomeHandler" />
+                </entry>
+                <entry key="sakai.announcements">
+                    <bean class="coza.opencollab.unipoole.service.lms.impl.SakaiAnnouncementHandler" />
+                </entry>
+                <entry key="sakai.melete">
+                    <bean class="coza.opencollab.unipoole.service.lms.impl.SakaiMeleteHandler" />
+                </entry>
+                <entry key="sakai.resources" value-ref="resourceHandler" />
+                <entry key="sakai.schedule">
+                    <bean class="coza.opencollab.unipoole.service.lms.impl.SakaiScheduleHandler" />
+                </entry>
+                <entry key="unisa.welcome">
+                    <bean class="coza.opencollab.unipoole.service.lms.impl.SakaiWelcomeHandler" />
+                </entry>
+                <entry key="unisa.faqs">
+                    <bean class="coza.opencollab.unipoole.service.lms.impl.SakaiFaqHandler" />
+                </entry>
+                <entry key="sakai.yaft">
+                    <bean class="coza.opencollab.unipoole.service.lms.impl.SakaiYaftHandler" >
+                        <property name="userGeneratedPlaceHolder" value="UNIPOOLE_" />
+                        <property name="jsonContentKey" value="content" />   
+                    </bean>
+                </entry>
+                <entry key="sakai.samigo">
+                    <bean class="coza.opencollab.unipoole.service.lms.impl.SakaiSamigoHandler" >
+                        <property name="sakaiContentBasePortlToolUrl" value="${sakai.content.base.portal.tool.url}" />
+                        <property name="pageTitle" value="${sakai.service.samigo.tool.name}" />
+                    </bean> 
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+    <!-- The LMS parser -->
+    <bean class="coza.opencollab.unipoole.service.lms.impl.SakaiLMSParser">
+        <property name="toolConverter">
+            <bean class="coza.opencollab.unipoole.service.lms.converter.impl.SakaiToolConverter" />
+        </property>
+        <property name="moduleConverter">
+            <bean class="coza.opencollab.unipoole.service.lms.converter.impl.SakaiModuleConverter" />
+        </property>
+        <property name="moduleFilter">
+            <bean class="coza.opencollab.unipoole.service.lms.filter.impl.AllowAllModuleFilter" />
+        </property>
+        <property name="toolFilter">
+            <bean class="coza.opencollab.unipoole.service.lms.filter.impl.ListToolFilter">
+                <property name="toolNames">
+                    <list>
+                        <value>sakai.home</value>
+                        <value>sakai.announcements</value>
+                        <value>sakai.yaft</value>
+                        <value>sakai.melete</value>
+                        <value>sakai.resources</value>
+                        <value>sakai.schedule</value>
+                        <value>unisa.faqs</value>
+                        <value>unisa.welcome</value>
+                        <value>sakai.samigo</value>
+                    </list>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    
+    <!-- The Event Service -->
+    <bean class="coza.opencollab.unipoole.service.event.impl.SakaiEventService">
+        <property name="datePattern" value="yyyy-MM-dd HH:mm:ss" />
+    </bean>
+    
+    <!-- Session Manager -->
+    <bean class="coza.opencollab.unipoole.service.util.impl.CachedSessionManager">
+        <property name="sessionTimeout" value="${sakai.session.timeout}" />
+        <property name="adminUsername" value="${sakai.admin.username}" />
+        <property name="adminPassword" value="${sakai.admin.password}" />
+    </bean>
+    
+    <!-- The Sakai Resource handler. This will be called by multiple handlers -->
+    <bean id="resourceHandler" class="coza.opencollab.unipoole.service.lms.impl.SakaiResourceHandler" />
+    
+    <!-- The Sakai Event Service -->
+    <bean class="coza.opencollab.unipoole.sakai.client.impl.EventServiceImpl">
+        <property name="serviceWSDL" value="${sakai.service.wsdl.base}${sakai.service.wsdl.event}" />
+        <property name="timeout" value="30000" />
+    </bean>
+    
+    <!-- The Sakai Login Service -->
+    <bean class="coza.opencollab.unipoole.sakai.client.impl.LoginServiceImpl">
+        <property name="serviceWSDL" value="${sakai.service.wsdl.base}${sakai.service.wsdl.login}" />
+        <property name="timeout" value="30000" />
+    </bean>
+    
+    <!-- The Sakai Module Service -->
+    <bean class="coza.opencollab.unipoole.sakai.client.impl.ModuleServiceImpl">
+        <property name="serviceWSDL" value="${sakai.service.wsdl.base}${sakai.service.wsdl.module}" />
+        <property name="timeout" value="30000" />
+    </bean>
+
+    <!-- The Sakai Announcement Service -->
+    <bean class="coza.opencollab.unipoole.sakai.client.impl.AnnouncementServiceImpl">
+        <property name="serviceWSDL" value="${sakai.service.wsdl.base}${sakai.service.wsdl.announcement}" />
+        <property name="timeout" value="30000" />
+    </bean>
+        
+    <!-- The Sakai Schedule Service -->
+    <bean class="coza.opencollab.unipoole.sakai.client.impl.ScheduleServiceImpl">
+        <property name="serviceWSDL" value="${sakai.service.wsdl.base}${sakai.service.wsdl.schedule}" />
+        <property name="timeout" value="30000" />
+    </bean>
+    
+    <!-- The Sakai Resources Service -->
+    <bean class="coza.opencollab.unipoole.sakai.client.impl.ResourcesServiceImpl">
+        <property name="serviceWSDL" value="${sakai.service.wsdl.base}${sakai.service.wsdl.resources}" />
+        <property name="timeout" value="145000" />
+    </bean>
+    
+    <!-- The Sakai Melete Service -->
+    <bean class="coza.opencollab.unipoole.sakai.client.impl.MeleteServiceImpl">
+        <property name="serviceWSDL" value="${sakai.service.wsdl.base}${sakai.service.wsdl.melete}" />
+        <property name="timeout" value="60000" />
+    </bean>
+    
+    <!-- The Sakai Welcome Service -->
+    <bean class="coza.opencollab.unipoole.sakai.client.impl.WelcomeServiceImpl">
+        <property name="serviceWSDL" value="${sakai.service.wsdl.base}${sakai.service.wsdl.welcome}" />
+        <property name="timeout" value="30000" />
+    </bean>
+    
+    <!-- The Sakai Faq Service -->
+    <bean class="coza.opencollab.unipoole.sakai.client.impl.FaqServiceImpl">
+        <property name="serviceWSDL" value="${sakai.service.wsdl.base}${sakai.service.wsdl.faq}" />
+        <property name="timeout" value="30000" />
+    </bean>
+    
+    <!-- The Sakai YAFT Service -->
+    <bean class="coza.opencollab.unipoole.sakai.client.impl.YaftServiceImpl">
+        <property name="serviceWSDL" value="${sakai.service.wsdl.base}${sakai.service.wsdl.yaft}" />
+        <property name="timeout" value="120000" />
+    </bean>
+    
+    <!-- The Sakai Samigo Service -->
+    <bean class="coza.opencollab.unipoole.sakai.client.impl.SamigoServiceImpl">
+        <property name="serviceWSDL" value="${sakai.service.wsdl.base}${sakai.service.wsdl.samigo}" />
+        <property name="timeout" value="30000" />
+    </bean>
+</beans>

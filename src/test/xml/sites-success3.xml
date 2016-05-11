@@ -1,0 +1,21 @@
+<!-- Three sites -->
+<sites>
+    <site>
+        <id>!admin</id>
+        <title>Administration Workspace</title>
+        <description>Administration Workspace</description>
+        <shortDescription>Administration Workspace</shortDescription>
+    </site>
+    <site>
+        <id>33456345344-4-5-34-534-3</id>
+        <title>This is a title</title>
+        <description>Some description</description>
+        <shortDescription>shoer description</shortDescription>
+    </site>
+    <site>
+        <id>32432-32--324-32-42</id>
+        <title>Site title</title>
+        <description>A long descriotn</description>
+        <shortDescription>short</shortDescription>
+    </site>
+</sites>

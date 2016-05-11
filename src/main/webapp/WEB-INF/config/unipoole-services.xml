@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+       http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    <!-- The Authentication service -->
+    <bean class="coza.opencollab.unipoole.service.auth.impl.DefaultAuthenticationService" >
+        <property name="encryptionKey" value="${authentication.encryption.key}" />
+        <property name="encryptionAlgorithm" value="${authentication.encryption.algorithm}" />
+        <property name="encryptionTransformation" value="${authentication.encryption.transformation}" />
+    </bean>
+    
+    <!-- The Code Service -->
+    <bean class="coza.opencollab.unipoole.service.code.impl.DefaultCodeService">
+        <property name="codeLoader" ref="unipooleCodeLoader" />
+        <property name="versionComparer">
+            <bean class="coza.opencollab.unipoole.service.util.impl.MajorMinorVersionComparer" />
+        </property>
+    </bean>
+    
+    <!-- The Content Service -->
+    <bean class="coza.opencollab.unipoole.service.content.impl.DefaultContentService">
+        <property name="contentLoader" ref="unipooleContentLoader" />
+        <property name="versionComparer">
+            <bean class="coza.opencollab.unipoole.service.util.impl.NumberVersionComparer">
+                <!-- XXX update this for date yyyyMMddHHmm
+               <property name="versionPattern" value="^(19|20)[0-9]{2}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])([01][0-9]|2[0-3])([0-5][0-9])$" />
+                -->
+                <property name="versionPattern" value="^[0-9]+$" />
+            </bean>
+        </property>
+    </bean>
+    
+    <!-- The Creator Service -->
+    <bean class="coza.opencollab.unipoole.service.creator.impl.DefaultCreatorService">
+        <property name="downloadUrl" value="${creator.download.url}" />
+        <property name="defaultProperties">
+            <map>
+                <entry key="name" value="${creator.default.user.name}" />
+                <entry key="email" value="${creator.default.user.email}" />
+            </map>
+        </property>
+    </bean>
+    
+    <!-- The Log Service -->
+    <bean class="coza.opencollab.unipoole.service.log.impl.DefaultLoggerService" />
+    
+    <!-- The Mail Service -->
+    <bean class="coza.opencollab.unipoole.service.mail.impl.DefaultMailService">
+        <property name="failSoftly" value="true" />
+        <property name="defaultFrom" value="${mail.default.from}" />
+        <property name="defaultReplyTo" value="${mail.default.replyto}" />
+        <property name="templateDirectory" value="${mail.template.directory}" />
+        <!--
+        <property name="mailSender" ref="mailSender" />
+        -->
+    </bean>
+    
+    <!-- The status service -->
+    <bean class="coza.opencollab.unipoole.service.report.impl.DefaultStatusService" />
+    
+    <!-- The Storage service -->
+    <bean class="coza.opencollab.unipoole.service.creator.impl.DefaultStorageService">
+        <property name="baseDirectory" value="${creator.base.directory}" />
+        <property name="tempDirectory" value="${creator.temp.directory}" />
+        <property name="storageFileHandler" ref="unipooleStorageFileHandler" />
+        <property name="fileHandlers">
+            <list>
+                <bean class="coza.opencollab.unipoole.service.util.impl.DirectoryFileHandler" />
+                <bean class="coza.opencollab.unipoole.service.util.impl.ZipFileHandler" />
+            </list>
+        </property>
+    </bean>
+    
+    <!-- The Synch service -->
+    <bean class="coza.opencollab.unipoole.service.synch.impl.DefaultSynchService" />
+    
+    <!-- The task service -->
+    <bean class="coza.opencollab.unipoole.service.task.impl.DefaultTaskService">
+        <property name="asynch" value="true" />
+        <property name="executorService" ref="codeLoaderExecutorService" />
+        <property name="scheduledExecutorService" ref="contentLoaderScheduledExecutorService" />
+        <property name="defaultDelay" value="${task.schedule.default.delay}" />
+        <property name="defaultFrequency" value="${task.schedule.default.frequency}" />
+    </bean>
+    
+    
+    <!-- The code loader -->
+    <bean id="unipooleCodeLoader" class="coza.opencollab.unipoole.service.code.impl.AsyncCodeLoader">
+        <property name="silentlyUpdateNonExistingVersions" value="true" />
+        <property name="nonExistingVersion" value="0.0.0" />
+        <property name="releaseName" value="UnipooleClient" />
+        <property name="entryComparer">
+            <bean class="coza.opencollab.unipoole.service.util.impl.FileEntryComparer" />
+        </property>
+        <property name="versionDateFormat" value="yyyyMMddHHmmssSSS" />
+    </bean>
+    
+    
+    <!-- The content loader -->
+    <bean id="unipooleContentLoader" class="coza.opencollab.unipoole.service.content.impl.AsyncContentLoader" init-method="init">
+        <property name="silentlyUpdateNonExistingVersions" value="true" />
+        <property name="nonExistingVersion" value="20000101010000000" />
+        <property name="releaseName" value="UnipooleClientContent" />
+        <property name="scheduleManagedModules" value="${creator.content.manage.modules}" />
+        <property name="versionDateFormat" value="yyyyMMddHHmmssSSS" />
+        <property name="masterSuffix" value="${sakai.site.master.suffix}" />
+        <property name="entryComparer">
+            <bean class="coza.opencollab.unipoole.service.util.impl.JsonMergeEntryComparer" />
+        </property>
+        <property name="contentConvertors">
+            <map>
+                <entry key="client.base" >
+                    <bean class="coza.opencollab.unipoole.service.content.impl.ClientBaseConverter" />
+                </entry>
+                <entry key="sakai.home" >
+                    <bean class="coza.opencollab.unipoole.service.content.impl.HomeConverter" />
+                </entry>
+                <entry key="sakai.announcements" >
+                    <bean class="coza.opencollab.unipoole.service.content.impl.AnnouncementConverter" parent="parent-resource-converter"/>
+                </entry>
+                <entry key="sakai.schedule" >
+                    <bean class="coza.opencollab.unipoole.service.content.impl.ScheduleConverter" parent="parent-resource-converter"/>
+                </entry>
+                <entry key="sakai.resources" >
+                    <bean class="coza.opencollab.unipoole.service.content.impl.ResourceConverter" parent="parent-resource-converter"/>
+                </entry>
+                <entry key="sakai.melete" >
+                    <bean class="coza.opencollab.unipoole.service.content.impl.MeleteConverter" parent="parent-resource-converter"/>
+                </entry>
+                <entry key="unisa.welcome" >
+                    <bean class="coza.opencollab.unipoole.service.content.impl.WelcomeConverter" parent="parent-resource-converter"/>
+                </entry>
+                <entry key="unisa.faqs" >
+                    <bean class="coza.opencollab.unipoole.service.content.impl.FaqConverter" />
+                </entry>
+                <entry key="sakai.yaft" >
+                    <bean class="coza.opencollab.unipoole.service.content.impl.YaftConverter" parent="parent-resource-converter"/>
+                </entry>
+                <entry key="sakai.samigo" >
+                    <bean class="coza.opencollab.unipoole.service.content.impl.SamigoConverter" />
+                </entry>
+            </map>
+        </property>
+        <property name="nonLMSTools">
+            <list>
+                <bean class="coza.opencollab.unipoole.shared.Tool" scope="prototype">
+                    <property name="name" value="client.base" />
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+    <!-- The ExecutorService for the code loader -->
+    <bean id="codeLoaderExecutorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool" />
+    
+    <!-- The ExecutorService for the content loader -->
+    <bean id="contentLoaderScheduledExecutorService" class="java.util.concurrent.Executors" factory-method="newSingleThreadScheduledExecutor" />
+    
+    <!-- The file handler for the code and sync -->
+    <bean id="unipooleStorageFileHandler" class="coza.opencollab.unipoole.service.util.impl.ZipFileHandler" />
+    
+    <!-- The parent bean for resource converters -->
+    <bean id="parent-resource-converter" abstract="true">
+        <property name="includeFilesInContent" value="false" />
+        <property name="storeFilesForDownload" value="true" />
+        <property name="linkDownLoader" ref="linkDownloader" />
+    </bean>
+    
+    <!-- The LinkDownloader to use -->
+    <bean id="linkDownloader" class="coza.opencollab.unipoole.service.util.impl.HtmlLinkDownLoader">
+        <property name="linkPrefix" value="data/" />
+        <property name="lMSContentService" ref="resourceHandler" />
+        <property name="lmsContentBaseURL" value="${sakai.content.base.url}" />
+        <property name="downloadTags">
+            <map>
+                <entry key="img" value="src" />
+                <entry key="a" value="href" />
+            </map>
+        </property>
+        <property name="downloadTagFilters">
+            <map>
+                <entry key="a">
+                    <bean class="coza.opencollab.unipoole.service.util.impl.FileExtentionTagFilter">
+                        <property name="attribute" value="href" />
+                        <property name="extentions">
+                            <list>
+                                <value>m4a</value>
+                                <value>doc</value>
+                                <value>pdf</value>
+                            </list>
+                        </property>
+                    </bean>
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+    <!-- Cluster Caching -->
+    <!-- Map Cache manager -->
+    <bean class="coza.opencollab.unipoole.service.util.impl.MapCacheManager" />
+    <!-- Hazelcast
+   <bean class="coza.opencollab.unipoole.service.util.impl.HazelcastCacheManager" />
+   -->
+</beans>

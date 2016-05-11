@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 2.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_2_0.dtd">
+<tiles-definitions>
+    <!-- Concrete page. To use this page, your controller must return the name "main-tiles" -->
+    <definition name="some-view" extends="template-main">
+        <put-attribute name="primary-content" value="/WEB-INF/jsp/somefile.jsp" />
+    </definition>
+</tiles-definitions>

@@ -1,0 +1,11 @@
+<!-- One site -->
+<sites>
+    <status>SUCCESS</status>
+    <message></message>
+    <site>
+        <id>!admin</id>
+        <title>Administration Workspace</title>
+        <description>Administration Workspace</description>
+        <shortDescription>Administration Workspace</shortDescription>
+    </site>
+</sites>
