@@ -12,15 +12,15 @@
     <packaging>war</packaging>
     <name>Unipoole Service</name>
     <description>The Unipoole Service is the web application that contain the Client Creator and the Synch Service.</description>
-    <url>http://unipoole.opencollab.co.za/reports/unipoole-service</url>
+    <url>https://github.com/Unipoole/unipoole-service</url>
      <!-- 
         The source control locations.
         Note that the source control name must be the same as the artifact name
     -->
     <scm>
-        <connection>scm:svn:http://svn.opencollab.co.za:18080/svn/unipoole/${project.artifactId}/trunk</connection>
-        <developerConnection>scm:svn:http://svn.opencollab.co.za:18080/svn/unipoole/${project.artifactId}/trunk</developerConnection>
-        <url>http://svn.opencollab.co.za:18080/viewvc/unipoole/${project.artifactId}/trunk</url>
+        <connection>scm:git:https://github.com/Unipoole/unipoole-service/tree/master</connection>
+        <developerConnection>scm:git:https://github.com/Unipoole/unipoole-service/tree/master</developerConnection>
+        <url>https://github.com/Unipoole/unipoole-service/tree/master</url>
     </scm>
     <properties>
         <sonar.language>java</sonar.language>
@@ -240,4 +240,8 @@
             </properties>
         </profile>
     </profiles>
+    <ciManagement>
+    	<system>Travis-CI</system>
+    	<url>https://travis-ci.org/Unipoole/unipoole-service</url>
+    </ciManagement>
 </project>
