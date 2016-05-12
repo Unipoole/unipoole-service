@@ -18,8 +18,8 @@
         Note that the source control name must be the same as the artifact name
     -->
     <scm>
-        <connection>scm:git:https://github.com/Unipoole/unipoole-service/tree/master</connection>
-        <developerConnection>scm:git:https://github.com/Unipoole/unipoole-service/tree/master</developerConnection>
+        <connection>scm:git:https://github.com/Unipoole/unipoole-client.git</connection>
+        <developerConnection>scm:git:https://github.com/Unipoole/unipoole-client.git</developerConnection>
         <url>https://github.com/Unipoole/unipoole-service/tree/master</url>
     </scm>
     <properties>
@@ -68,7 +68,6 @@
         <dependency>
             <groupId>com.hazelcast</groupId>
             <artifactId>hazelcast</artifactId>
-            <version>3.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -207,26 +206,6 @@
                 <database.password>dev</database.password>
                 <temp.path>../temp</temp.path>
                 <unipoole.url>http://localhost:8080/${project.build.finalName}</unipoole.url>
-            </properties>
-        </profile>
-        <profile>
-            <id>nightly</id>
-            <properties>
-                <log.file.directory>/opt/current/nightly-tomcat/logs</log.file.directory>
-                <database.username>unipoole</database.username>
-                <database.password>oc</database.password>
-                <temp.path>/opt/nightly-tomcat/temp</temp.path>
-                <unipoole.url>http://unipoole.opencollab.co.za:8081/${project.build.finalName}</unipoole.url>
-            </properties>
-        </profile>
-        <profile>
-            <id>release</id>
-            <properties>
-                <log.file.directory>/opt/current/nightly-tomcat/logs</log.file.directory>
-                <database.username>unipoolebi</database.username>
-                <database.password>bi</database.password>
-                <temp.path>/opt/current/reports-tomcat/temp</temp.path>
-                <unipoole.url>http://unipoole.opencollab.co.za:8082/${project.build.finalName}</unipoole.url>
             </properties>
         </profile>
         <profile>
