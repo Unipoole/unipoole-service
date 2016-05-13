@@ -29,3 +29,5 @@ Please note: If you deploy to more then one instance only one instance can have 
 
 ## Documentation
 * [Configuration](./docs/configuration.md)
+* [Database](./docs/database.md)
+* [Process Flow](./docs/process-flow.md)
