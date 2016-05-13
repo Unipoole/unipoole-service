@@ -1,6 +1,36 @@
 # Configuration
 The Unipoole-Service has very complex configuration through Spring with reasonable defaults.
 
+## application.properties
+This file can be found in the deployment in `WEB-INF/config`. It can also be places in the directory specified by the `UNIPOOLE_HOME` environment variable.
+This file contains the configuration values most likely to change.
+| Property | Set This | Default/Example |Description|
+-----------------------------------------------------
+|jdbc.driverClassName | oracle.jdbc.OracleDriver | The database driver class. |
+|jdbc.url | X | jdbc:oracle:thin:@oracle.opencollab.co.za:1521:uni_dev | The database URL containing the server name/IP, port and database name. |
+|jdbc.username | X | Uni-User | The database username. |
+|jdbc.password | X | MyPassword | The database password. |
+|creator.base.directory | X | /opt/unipoole/store | The base directory that will be used to store client code and content from the LMS. If Unipoole Service is running as a cluster this needs to point to a shared directory. |
+|creator.temp.directory | X | /opt/unipoole/temp | A temp directory space. |
+|creator.download.url | X | http://unipoole.opencollab.co.za:8081/unipoole-service/service-creator/download/ | The full URL to the download service. Will always end on service-creator/download/ |
+|creator.default.user.name |   | Unipoole Creator | Any name to use in mails when clients are created. Note: This will only be used if the user did not provide a name in the Admin Tool. |
+|creator.default.user.email | X | sakai@opencollab.co.za | A email address to send mails to when clients are created. Note: This will only be used if the user did not provide a email in the Admin Tool. |
+|creator.content.manage.modules | X | true/false | Whether this instance of Unipoole Service will run the Module Management process which creates synch content packages. Only one instance can run this process. |
+|task.schedule.default.delay | X | Any number | The default delay before a scheduled task runs for the first time in minutes. |
+|task.schedule.default.frequency | X | Any number | The delay between runs for a scheduled tasks in minutes. |
+|mail.default.from | X | unipoole@opencollab.co.za | The from address to use in the mail service. |
+|mail.default.replyto | X | unipoole@opencollab.co.za | The reply-to address to use in the mail service. |
+|mail.template.directory | X | /opt/unipoole/mailtemplates | The directory where the mail templates are stored. |
+|sakai.admin.username | X | oc_admin | A Sakai admin user. The user need admin rights on Sakai to retrieve data from any site or user. |
+|sakai.admin.password | X | 779@h | The admin user password. |
+|sakai.session.timeout | X | 5 | The amount of time in minutes to cache the Sakai sessions on the Unipoole Service side. This helps to have less calls to Sakai. This amount must be less then the Sakai Session timeout. |
+|sakai.service.wsdl.base | X | http://unipoole.opencollab.co.za:8080/sakai-axis/ | The Sakai Axis URL. |
+|sakai.site.type.master |   | onlcourse | The site type for the master modules. |
+|sakai.site.type.group |   | onlgroup | The site type for the group modules. |
+
+
+
+
 ## JPA Configuration
 Please change the `persistence.xml` file located at `src/main/resources/META-INF/persistence.xml`. Add the following under the properties section (line 16+).
 ```xml
