@@ -5,7 +5,7 @@ The Unipoole-Service has very complex configuration through Spring with reasonab
 This file can be found in the deployment in `WEB-INF/config`. It can also be places in the directory specified by the `UNIPOOLE_HOME` environment variable.
 This file contains the configuration values most likely to change.
 | Property | Set This | Default/Example |Description|
------------------------------------------------------
+|----------|----------|-----------------|-----------|
 |jdbc.driverClassName | oracle.jdbc.OracleDriver | The database driver class. |
 |jdbc.url | X | jdbc:oracle:thin:@oracle.opencollab.co.za:1521:uni_dev | The database URL containing the server name/IP, port and database name. |
 |jdbc.username | X | Uni-User | The database username. |
