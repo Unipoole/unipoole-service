@@ -32,6 +32,26 @@ This file contains the configuration values most likely to change.
 
 
 
+## lms-services.xml
+This file can be found in the deployment in `WEB-INF/config`.
+This file contains the Spring configuration for the interaction with the LMS (Sakai).
+
+**Beans to note**
+### LMS Client implementation
+This declare the implementation used to communicate with the LMS. Here you can specify filters for modules and different tool converters.
+### LMS parser
+A class used to parse the data from the LMS. Setup tool and module filters and converters.
+### Tool Services
+There are a service for each tool that Unipoole can handle. Here you can specify the timeouts for the service.
+
+## unipoole-services.xml
+This file can be found in the deployment in WEB-INF/config.
+This file contains the Spring configuration for the Unipoole services.
+**Beans to note**
+### Mail Service
+Setup the mail service. If you need to connect to an existing mail service this can be changed.
+### ExecutorServices
+Setup the thread pool and processing services. These can be updated for better performance in your environment.
 
 ## JPA Configuration
 Please change the `persistence.xml` file located at `src/main/resources/META-INF/persistence.xml`. Add the following under the properties section (line 16+).
