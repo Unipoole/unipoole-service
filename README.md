@@ -4,10 +4,10 @@
 The Unipoole Service is the intelligence and processing engine of all data communication between the Unipoole Client and Sakai.
 This is a deployable project.
 
-** Unipoole Service Architecture **
+**Unipoole Service Architecture**
 <img src="http://unipoole.github.io/images/unipoole-service/service-architecture.jpg" style="max-width: 100%" />
 
-** Highlevel Overview **
+**Highlevel Overview**
 <img src="http://unipoole.github.io/images/unipoole-service/highlevel-overview.png" style="max-width: 100%" />
 
 This diagram illustrates on a very high level how unipoole, unipoole clients, and sakai fit together.  A unipoole server will host the Unipoole-Service, and the Admin tool.
