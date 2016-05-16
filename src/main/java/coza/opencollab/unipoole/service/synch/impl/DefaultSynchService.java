@@ -1,8 +1,6 @@
 package coza.opencollab.unipoole.service.synch.impl;
 
 import static coza.opencollab.unipoole.service.ErrorCodes.CONTENT_VERSION;
-
-import coza.opencollab.unipoole.service.Defaults;
 import coza.opencollab.unipoole.service.ServiceCallStatus;
 import coza.opencollab.unipoole.service.auth.AuthenticationService;
 import coza.opencollab.unipoole.service.dao.Dao;
@@ -103,7 +101,7 @@ public class DefaultSynchService implements SynchService {
             return new SynchContent(login);
         }
         //Just to make sure that the user had this version in their record.
-//        updateContentVersion(username, deviceId, moduleId, toolName, contentVersion);
+        updateContentVersion(username, deviceId, moduleId, toolName, contentVersion);
         SynchContent content = contentService.getContentSynch(username, deviceId, moduleId, toolName, contentVersion);
         eventService.addEventForUser(username, EventCodes.SYNCH_CONTENT_REQUEST, deviceId + "-" + toolName + "(" + content.getVersion() + ")", moduleId);
         return content;
@@ -154,8 +152,8 @@ public class DefaultSynchService implements SynchService {
         }
         for (Map.Entry<String, Status> entry : tools.entrySet()) {
             Status status = entry.getValue();
-//            updateCodeVersion(username, synchStatus.getDeviceId(), entry.getKey(), status.getClientCodeVersion());
-//            updateContentVersion(username, synchStatus.getDeviceId(), synchStatus.getModuleId(), entry.getKey(), status.getClientContentVersion());
+            updateCodeVersion(username, synchStatus.getDeviceId(), entry.getKey(), status.getClientCodeVersion());
+            updateContentVersion(username, synchStatus.getDeviceId(), synchStatus.getModuleId(), entry.getKey(), status.getClientContentVersion());
             SynchContent codeSynchContent = codeService.getToolSynch(entry.getKey(), status.getClientCodeVersion());
             status.setCurrentCodeVersion(codeSynchContent.getVersion());
             SynchContent contentSynchContent = contentService.getContentSynch(username, synchStatus.getDeviceId(), synchStatus.getModuleId(), entry.getKey(), status.getClientContentVersion());
@@ -163,14 +161,13 @@ public class DefaultSynchService implements SynchService {
             status.setCodeSynchSize(codeSynchContent.getSize());
             status.setContentSynchSize(contentSynchContent.getSize());
         }
-//        //now check if we are missing tools. 
-        DeviceRegistration deviceRegistration = dao.getMasterDeviceRegistration();
-        List<String> toolNames = dao.getToolNames(deviceRegistration); // Get the tools names
+        //now check if we are missing tools.
+        List<String> toolNames = dao.getToolNames(username, synchStatus.getDeviceId());
         for (String toolName : toolNames) {
             if (!tools.keySet().contains(toolName)) {
                 Status status = new Status();
-                status.setClientCodeVersion(synchStatus.getTools().get(toolName).getClientCodeVersion());
-                status.setClientContentVersion(synchStatus.getTools().get(toolName).getClientContentVersion());
+                status.setClientCodeVersion(statusService.getClientCodeVersion(username, synchStatus.getDeviceId(), toolName));
+                status.setClientContentVersion(statusService.getClientContentVersion(username, synchStatus.getDeviceId(), synchStatus.getModuleId(), toolName));
                 SynchContent codeSynchContent = codeService.getToolSynch(toolName, status.getClientCodeVersion());
                 status.setCurrentCodeVersion(codeSynchContent.getVersion());
                 SynchContent contentSynchContent = contentService.getContentSynch(username, synchStatus.getDeviceId(), synchStatus.getModuleId(), toolName, status.getClientContentVersion());
@@ -244,12 +241,32 @@ public class DefaultSynchService implements SynchService {
     }
 
 	@Override
-	public SyncContentMapping getContentMapping(String toSiteId, String toolId) {
-		List<ContentMapping> contentMappingList = dao.getContentMapping(toSiteId, toolId);
+	public SyncContentMapping getContentMapping(String toSiteId, List<String> toolIds) {
 		SyncContentMapping scm = new SyncContentMapping();
+		DeviceRegistration deviceRegistration = dao.getMasterDeviceRegistration();
+        ModuleRegistration moduleRegistration = dao.getModuleRegistration(deviceRegistration, toSiteId);
+        
+		for(String toolId : toolIds){
+			// Get the tool mapping
+			SyncContentMapping.ToolMapping toolMapping = getToolMapping(toSiteId, toolId);
+			if(!toolMapping.isEmpty()){
+				scm.addMapping(toolMapping);
+			}
+			
+			// Get the first version for the tool
+			ContentVersion contentVersion = dao.getFirstContentVersion(moduleRegistration, toolId);
+			if(contentVersion != null){
+				scm.addContentVersion(toolId, contentVersion.getContentVersion());
+			}
+		}
+		return scm;
+	}
+	
+	private SyncContentMapping.ToolMapping getToolMapping(String toSiteId, String toolId) {
+		List<ContentMapping> contentMappingList = dao.getContentMapping(toSiteId, toolId);
 		
+		Map<String, String> mappings = new HashMap<String, String>();
 		if(contentMappingList != null){
-			Map<String, String> mappings = new HashMap<String, String>();
 			String fromId;
 			for(ContentMapping cm : contentMappingList){
 				fromId = cm.getToolFromId();
@@ -260,9 +277,8 @@ public class DefaultSynchService implements SynchService {
 				}
 				mappings.put(fromId, cm.getToolToId());
 			}
-			scm.setMappings(mappings);
 		}
 		
-		return scm;
+		return new SyncContentMapping.ToolMapping(toolId, mappings);
 	}
 }

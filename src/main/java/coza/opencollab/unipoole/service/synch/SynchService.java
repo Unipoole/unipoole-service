@@ -7,6 +7,7 @@ import coza.opencollab.unipoole.service.synch.so.SynchStatus;
 import coza.opencollab.unipoole.service.synch.so.UpdateContent;
 import coza.opencollab.unipoole.service.synch.so.UpdateStatus;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -99,6 +100,6 @@ public interface SynchService {
      * @param toolId Id of this content on the site this content was copies to. I.e. the group site.
      * @return A list of content mappings
      */
-    public SyncContentMapping getContentMapping(String toSiteId, String toolId);
+    public SyncContentMapping getContentMapping(String toSiteId, List<String> toolIds);
 
 }

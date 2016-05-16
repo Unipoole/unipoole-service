@@ -12,6 +12,7 @@ import coza.opencollab.unipoole.service.synch.so.UpdateStatus;
 import coza.opencollab.unipoole.service.util.impl.ZipUtil;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,14 +122,15 @@ public class SynchController extends BaseController{
      * @param contentVersion The current tool content version
      * @return The new tool content
      */
-    @RequestMapping(value = "/contentUpdateString/{username}/{deviceId}/{moduleId}/{toolName:.+}/{contentVersion:.+}", method = RequestMethod.POST)
+    @SuppressWarnings("rawtypes")
+	@RequestMapping(value = "/contentUpdateString/{username}/{deviceId}/{moduleId}/{toolName:.+}/{contentVersion:.+}", method = RequestMethod.POST)
     public @ResponseBody SynchContent getContentString(@RequestBody String body, @PathVariable String username, @PathVariable String deviceId, @PathVariable String moduleId, @PathVariable String toolName, @PathVariable String contentVersion) {
         contentVersion = checkVersion(contentVersion);
         String password = getPassword(body);
         SynchContent synchContent= synchService.getContent(username, password, deviceId, moduleId, toolName, contentVersion);
         try {
             Map contentDetail = ZipUtil.getUnZippedBinary(synchContent.getContent());
-            synchContent.setContent((byte[]) contentDetail.get("data"));
+            synchContent.setContent(new String((byte[]) contentDetail.get("data"), "UTF-8").getBytes("UTF-8"));
             synchContent.setContentString((String) contentDetail.get("text"));
             synchContent.setContentName((String) contentDetail.get("name"));
             synchContent.setMimeType("text/plain");
@@ -150,7 +152,6 @@ public class SynchController extends BaseController{
      * @param moduleId The module id
      * @return The updated <source>SynchStatus</source> containing the out of synch data
      */
-    @Deprecated // Charl remove this in the future
     @RequestMapping(value = "/synchStatus/{username}/{deviceId}/{moduleId}", method = RequestMethod.GET)
     public @ResponseBody SynchStatus getSynchStatus(@PathVariable String username, @PathVariable String deviceId, @PathVariable String moduleId) {
     	/*
@@ -266,9 +267,11 @@ public class SynchController extends BaseController{
     
     
     
-    @RequestMapping(value = "/contentMappings/{toSite}/{toolName:.+}", method = RequestMethod.GET)
-    public @ResponseBody SyncContentMapping getSyncContentMapping(@PathVariable String toSite, @PathVariable String toolName){
-    	return synchService.getContentMapping(toSite, toolName);
+    @SuppressWarnings("unchecked")
+	@RequestMapping(value = "/contentMappings/{toSite}", method = RequestMethod.POST)
+    public @ResponseBody SyncContentMapping getSyncContentMapping(@PathVariable String toSite, @RequestBody String body){
+    	List<String> toolNames = (List<String>)parseJsonToList(body);
+    	return synchService.getContentMapping(toSite, toolNames);
     }
 
     /**

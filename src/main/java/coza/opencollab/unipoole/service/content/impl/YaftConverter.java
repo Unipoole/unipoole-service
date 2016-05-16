@@ -75,7 +75,7 @@ public class YaftConverter extends AbstractResourceContentConverter<List<Forum>,
             }
         }
         if (data.size() > 0) {
-            ByteArrayEntry entry = new ByteArrayEntry("Yaft.json", "data", JsonParser.writeJsonBytes(data));
+            ByteArrayEntry entry = new ByteArrayEntry("yaft.json", "data", JsonParser.writeJsonBytes(data));
             entries.add(entry);
         }
         LOG.info("Yaft Converter executed");

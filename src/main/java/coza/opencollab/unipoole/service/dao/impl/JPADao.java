@@ -114,7 +114,7 @@ public class JPADao implements Dao {
      * @param deviceRegistration The device registration.
      * @return The tool names.
      */
-    public List<String> getToolNames(DeviceRegistration deviceRegistration) {
+    private List<String> getToolNames(DeviceRegistration deviceRegistration) {
         try {
             Query query = em.createNamedQuery("toolNames");
             query.setParameter(DeviceRegistration.PARAMETER_DEVICE_REGISTRATION_ID, deviceRegistration.getId());
@@ -1026,7 +1026,24 @@ public class JPADao implements Dao {
             query.setParameter(ContentMapping.PARAMETER_SITE_TO_ID, toSiteId);
             query.setParameter(ContentMapping.PARAMETER_TOOL_NAME, toolId);
             return query.getResultList();
-        } finally {
+        } finally { 
+            if (em != null) {
+                em.close();
+            }
+        }
+	}
+
+	@Override
+	public ContentVersion getFirstContentVersion(ModuleRegistration moduleRegistration, String toolId) {
+		try {
+            Query query = em.createNamedQuery("contentVersionsForTool");
+            query.setParameter(ModuleRegistration.PARAMETER_MODULE_REGISTRATION_ID, moduleRegistration.getId());
+            query.setParameter(ToolVersion.PARAMETER_TOOL_NAME, toolId);
+            query.setMaxResults(1); // Only get one version
+            return (ContentVersion)query.getSingleResult();
+        } catch(NoResultException nre){
+        	return null;
+        }finally {
             if (em != null) {
                 em.close();
             }

@@ -514,7 +514,6 @@ public interface Dao {
      */
     public List<ContentReleaseVersion> getContentReleaseVersions(ContentRelease contentRelease);
     
-    public List<String> getToolNames(DeviceRegistration deviceRegistration);
     
     /**
      * Gets the content ID mapping from and to a new site for toolId
@@ -523,4 +522,12 @@ public interface Dao {
      * @return A list of content mappings
      */
     public List<ContentMapping> getContentMapping(String toSiteId, String toolId);
+    
+    /**
+     * Get the first content version for a tool in a module
+     * @param moduleId Id of the Module
+     * @param toolId Id of the Tool
+     * @return The first content version for the tool.
+     */
+    public ContentVersion getFirstContentVersion(ModuleRegistration moduleRegistration, String toolId);
 }

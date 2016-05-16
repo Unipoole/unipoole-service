@@ -207,9 +207,9 @@ public class AsyncContentLoader extends AbstractLoader implements ContentLoader 
         if (moduleRegistration == null) {
             LOG.info("Create new module registration (" + moduleId + ").");
             moduleRegistration = dao.createModuleRegistration(deviceRegistration, moduleId);
-            if (!isMaster) {
-                copyMasterContentToGroup(managedModule, deviceRegistration, moduleRegistration, tools);
-            }
+//            if (!isMaster) {
+//                copyMasterContentToGroup(managedModule, deviceRegistration, moduleRegistration, tools);
+//            }
         }
         for (Tool tool : tools) {
             LOG.info("Loading module (" + moduleId + ") tool (" + tool.getName() + ").");
@@ -247,40 +247,37 @@ public class AsyncContentLoader extends AbstractLoader implements ContentLoader 
             createStorageFile(entries, moduleId, tool.getName(), newVersion);
             ContentVersion newContentVersion = dao.createContentVersion(moduleRegistration, tool.getName(), newVersion);
             dao.deactivateAllOther(newContentVersion);
-            LOG.info( Counter_1 +". End of for loop " + new Date());
         }
         managedModule.setLastSync();
         LOG.info("Commiting content for module (" + moduleId + ").");
         dao.update(managedModule);
-        LOG.info( Counter_1 + ". End of Function "+ new Date());
-        Counter_1++;
     }
 
-    /**
-     * Copy the master data to the group for new groups.
-     */
-    @Transactional
-    public void copyMasterContentToGroup(ManagedModule managedModule, DeviceRegistration deviceRegistration, ModuleRegistration moduleRegistration, List<Tool> tools) {
-        LOG.info("Copying the master module (" + managedModule.getMasterModuleId() + ") content to the module (" + managedModule.getModuleId() + ").");
-        ModuleRegistration masterModuleRegistration = dao.getModuleRegistration(deviceRegistration, managedModule.getMasterModuleId());
-        if (masterModuleRegistration == null) {
-            LOG.info("No master module!");
-            return;
-        }
-        for (Tool tool : tools) {
-            LOG.info("Copying tool " + tool.getName());
-            List<ContentVersion> masterContentVersions = dao.getContentVersions(masterModuleRegistration, tool.getName());
-            if (masterContentVersions == null || masterContentVersions.isEmpty()) {
-                LOG.debug("No content for tool " + tool.getName());
-                continue;
-            }
-            for (int i = 0; i < masterContentVersions.size(); i++) {
-                ContentVersion masterContentVersion = masterContentVersions.get(i);
-                dao.deactivateAllContentVersions(moduleRegistration.getId(), masterContentVersion.getToolName());
-                copyFromMasterToGroup(masterModuleRegistration, masterContentVersion, moduleRegistration);
-            }
-        }
-    }
+//    /**
+//     * Copy the master data to the group for new groups.
+//     */
+//    @Transactional
+//    public void copyMasterContentToGroup(ManagedModule managedModule, DeviceRegistration deviceRegistration, ModuleRegistration moduleRegistration, List<Tool> tools) {
+//        LOG.info("Copying the master module (" + managedModule.getMasterModuleId() + ") content to the module (" + managedModule.getModuleId() + ").");
+//        ModuleRegistration masterModuleRegistration = dao.getModuleRegistration(deviceRegistration, managedModule.getMasterModuleId());
+//        if (masterModuleRegistration == null) {
+//            LOG.info("No master module!");
+//            return;
+//        }
+//        for (Tool tool : tools) {
+//            LOG.info("Copying tool " + tool.getName());
+//            List<ContentVersion> masterContentVersions = dao.getContentVersions(masterModuleRegistration, tool.getName());
+//            if (masterContentVersions == null || masterContentVersions.isEmpty()) {
+//                LOG.debug("No content for tool " + tool.getName());
+//                continue;
+//            }
+//            for (int i = 0; i < masterContentVersions.size(); i++) {
+//                ContentVersion masterContentVersion = masterContentVersions.get(i);
+//                dao.deactivateAllContentVersions(moduleRegistration.getId(), masterContentVersion.getToolName());
+//                copyFromMasterToGroup(masterModuleRegistration, masterContentVersion, moduleRegistration);
+//            }
+//        }
+//    }
 
     /**
      * Write the entries to the storage.

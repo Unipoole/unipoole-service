@@ -68,5 +68,6 @@ public interface ContentService {
      * @param moduleId The module id.
      * @return The client content release.
      */
-    public File getLatestContentReleaseFile(String moduleId);    
+    public File getLatestContentReleaseFile(String moduleId);
+   
 }

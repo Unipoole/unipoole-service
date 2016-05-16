@@ -4,15 +4,20 @@ import coza.opencollab.unipoole.UnipooleException;
 import static coza.opencollab.unipoole.util.JsonParser.*;
 import coza.opencollab.unipoole.service.BaseController;
 import coza.opencollab.unipoole.service.ErrorCodes;
+import coza.opencollab.unipoole.service.ServiceObject;
+import coza.opencollab.unipoole.service.content.ContentService;
 import coza.opencollab.unipoole.service.creator.so.CreatorClient;
 import coza.opencollab.unipoole.shared.Module;
 import coza.opencollab.unipoole.shared.Tool;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.ConfigurableMimeFileTypeMap;
@@ -43,6 +48,13 @@ public class CreatorController extends BaseController{
      */
     @Autowired
     private CreatorService creatorService;
+    
+    /**
+     * The content service.
+     */
+    @Autowired
+    private ContentService contentService;
+    
     /**
      * A mime type map.
      */
@@ -70,6 +82,13 @@ public class CreatorController extends BaseController{
     @RequestMapping(value = "/tools/{moduleId}", method = RequestMethod.GET)
     public @ResponseBody List<Tool> getTools(@PathVariable String moduleId){
         return creatorService.getTools(moduleId);
+    }
+    
+    
+    @RequestMapping(value = "/createVersion/{moduleId}", method = RequestMethod.GET)
+    public @ResponseBody ServiceObject createVersion(@PathVariable String moduleId){
+    	contentService.loadContent(moduleId);
+        return new ServiceObject();
     }
     
     /**
@@ -100,6 +119,7 @@ public class CreatorController extends BaseController{
      * @param moduleId The module id as retrieved from the get modules function.
      * @return A map with relevant data about the created client
      */
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/createClient/{moduleId}", method = RequestMethod.POST)
     public @ResponseBody CreatorClient createClient(@RequestBody String body, @PathVariable String moduleId){
         Map<String, ?> data = parseJsonToMap(body);
@@ -116,7 +136,8 @@ public class CreatorController extends BaseController{
      * @param username The username of the user.
      * @return A map with relevant data about the created client
      */
-    @RequestMapping(value = "/myClient/{username}", method = RequestMethod.POST)
+    @SuppressWarnings("unchecked")
+	@RequestMapping(value = "/myClient/{username}", method = RequestMethod.POST)
     public @ResponseBody CreatorClient createClientUser(@RequestBody String body, @PathVariable String username){
         Map<String, String> data = (Map<String, String>) parseJsonToMap(body);
         return creatorService.createClient(username, data.get("password"), data);
@@ -132,6 +153,7 @@ public class CreatorController extends BaseController{
      * @param moduleId The module id to create the client for.
      * @return A map with relevant data about the created client
      */
+    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/myClient/{username}/{moduleId}", method = RequestMethod.POST)
     public @ResponseBody CreatorClient createClient(@RequestBody String body, @PathVariable String username, @PathVariable String moduleId){
         Map<String, String> data = (Map<String, String>) parseJsonToMap(body);

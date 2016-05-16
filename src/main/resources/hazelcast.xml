@@ -59,8 +59,8 @@
             and members can not properly build up the cluster. 
             -->
             <tcp-ip enabled="true">
-                <member>the.ip.of.member1</member>
-                <member>the.ip.of.memberX</member>
+                <member>143.160.208.14</member>
+                <member>143.160.208.13</member>
             </tcp-ip>
             <!--
             You can also specify which network interfaces that Hazelcast should use. 
